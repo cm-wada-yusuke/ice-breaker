@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark";
+type Theme = "light" | "dark" | null;
 
 interface ThemeContextType {
   theme: Theme;
@@ -12,27 +12,37 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>(null);
 
   useEffect(() => {
-    // 初期テーマをシステム設定から取得
-    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setTheme(isDark ? "dark" : "light");
+    // 初期ロード時にシステムのテーマ設定を確認
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const savedTheme = document.documentElement.getAttribute('data-theme') as Theme;
+    const systemTheme = mediaQuery.matches ? 'dark' : 'light';
+    
+    setTheme(savedTheme || systemTheme);
 
     // システムのテーマ変更を監視
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = (e: MediaQueryListEvent) => setTheme(e.matches ? "dark" : "light");
-    mediaQuery.addEventListener("change", handler);
-    return () => mediaQuery.removeEventListener("change", handler);
+    const handler = (e: MediaQueryListEvent) => {
+      const newTheme = e.matches ? 'dark' : 'light';
+      setTheme(newTheme);
+    };
+    
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    setTheme((prev) => {
+      if (prev === null) return 'light';
+      return prev === "light" ? "dark" : "light";
+    });
   };
 
   useEffect(() => {
-    // テーマに応じてdata-theme属性を更新
-    document.documentElement.setAttribute("data-theme", theme);
+    if (theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
   }, [theme]);
 
   return (
