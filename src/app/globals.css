@@ -11,6 +11,8 @@
   --button-secondary-bg: #f5f5f5;
   --button-secondary-hover: #e5e5e5;
   --footer-text: #666666;
+  --textarea-bg: #f0f0f0;
+  --textarea-text: #262626;
 }
 
 :root[data-theme="dark"] {
@@ -22,6 +24,8 @@
   --button-secondary-bg: #666666;
   --button-secondary-hover: #555555;
   --footer-text: #666666;
+  --textarea-bg: #1a1a1a;
+  --textarea-text: #ededed;
 }
 
 body {

@@ -1,12 +1,50 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTheme } from "./contexts/ThemeContext";
 
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
+  const [inputText, setInputText] = useState("");
+  const [result, setResult] = useState("");
+  const [isShuffling, setIsShuffling] = useState(false);
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+
+  const shuffle = (array: string[]) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
+
+  const handleShuffle = () => {
+    if (!inputText.trim() || isShuffling) return;
+
+    setIsShuffling(true);
+    const lines = inputText.trim().split('\n').filter(line => line.trim());
+    
+    // アニメーション開始
+    const startTime = Date.now();
+    const duration = 3000; // 3秒間
+    
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      if (elapsed < duration) {
+        // アニメーション中は頻繁にシャッフル
+        setResult(shuffle(lines).join(' '));
+        requestAnimationFrame(animate);
+      } else {
+        // 最終的なシャッフル結果
+        setResult(shuffle(lines).join(' '));
+        setIsShuffling(false);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  };
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -76,8 +114,33 @@ export default function Home() {
       </header>
 
       <main className="flex flex-col items-center justify-center p-8 space-y-8">
+        <div className="w-full max-w-2xl space-y-6">
+          <textarea
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            placeholder="改行区切りで入力したテキストをシャッフルできます"
+            className="w-full h-48 p-4 rounded border dark:border-gray-600 resize-y"
+            style={{ backgroundColor: 'var(--textarea-bg)', color: 'var(--textarea-text)' }}
+          />
+          
+          <div className="flex justify-center">
+            <button
+              onClick={handleShuffle}
+              disabled={isShuffling || !inputText.trim()}
+              className="btn-primary px-12 py-3 rounded disabled:opacity-50 transition-colors"
+            >
+              シャッフル
+            </button>
+          </div>
+
+          {result && (
+            <div className="p-6 rounded min-h-[60px] transition-colors">
+              <p className="break-words">{result}</p>
+            </div>
+          )}
+        </div>
+
         <div className="text-center">
-          <h2 className="text-xl mb-8">トークテーマはコチラから</h2>
           <div className="text-[200px] font-mono leading-none">{formatTime(time)}</div>
         </div>
 
