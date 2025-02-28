@@ -169,6 +169,12 @@ export default function Home() {
           >
             03:00
           </button>
+          <button
+            onClick={() => setTimerValue(300)}
+            className="btn-secondary px-6 py-2 rounded-full min-w-[80px] transition-colors"
+          >
+            05:00
+          </button>
         </div>
 
         <div className="flex gap-4">
