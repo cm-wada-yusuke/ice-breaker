@@ -6,22 +6,27 @@ export const Timer: React.FC<{ large: boolean }> = ({ large = false }) => {
   // タイマー関連の状態を移動
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [hasFinished, setHasFinished] = useState(false); // カウントダウン終了状態
 
   // タイマー関連の関数を移動
   const setTimerValue = (seconds: number) => {
     setTime(seconds);
     setIsRunning(false);
+    setHasFinished(false); // リセット
   };
 
   const toggleTimer = () => {
     if (time > 0) {
       setIsRunning(!isRunning);
+      // タイマー開始時は終了状態ではないが、既に0秒でhasFinishedがtrueの場合はリセットしない
+      // （0秒からStartを押すことはUI上できないため、基本的には不要な考慮）
     }
   };
 
   const resetTimer = () => {
     setTime(0);
     setIsRunning(false);
+    setHasFinished(false); // リセット
   };
 
   const formatTime = (seconds: number) => {
@@ -37,10 +42,12 @@ export const Timer: React.FC<{ large: boolean }> = ({ large = false }) => {
     let intervalId: NodeJS.Timeout;
 
     if (isRunning && time > 0) {
+      setHasFinished(false); // カウントダウン開始時にリセット
       intervalId = setInterval(() => {
         setTime((prevTime) => {
           if (prevTime <= 1) {
             setIsRunning(false);
+            setHasFinished(true); // カウントダウン終了
             return 0;
           }
           return prevTime - 1;
@@ -61,6 +68,8 @@ export const Timer: React.FC<{ large: boolean }> = ({ large = false }) => {
         <div
           className={`font-mono leading-none w-full ${
             large ? "text-[400px]" : "text-[200px]"
+          } ${
+            time === 0 && hasFinished ? "text-pink-500" : ""
           }`}
         >
           {formatTime(time)}
@@ -69,7 +78,7 @@ export const Timer: React.FC<{ large: boolean }> = ({ large = false }) => {
 
       <div className="flex gap-2 flex-wrap justify-center">
         <button
-          onClick={() => setTimerValue(30)}
+          onClick={() => setTimerValue(3)}
           className="btn-secondary px-6 py-2 rounded-full min-w-[80px] transition-colors"
         >
           00:30

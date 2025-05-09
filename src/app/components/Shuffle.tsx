@@ -64,7 +64,7 @@ export const Shuffle: React.FC = () => {
           シャッフル
         </button>
         {result && (
-          <div className="rounded min-h-[60px] transition-colors">
+          <div className="rounded transition-colors">
             <p className="text-2xl break-words">{result}</p>
           </div>
         )}
