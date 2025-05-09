@@ -78,7 +78,7 @@ export const Timer: React.FC<{ large: boolean }> = ({ large = false }) => {
 
       <div className="flex gap-2 flex-wrap justify-center">
         <button
-          onClick={() => setTimerValue(3)}
+          onClick={() => setTimerValue(30)}
           className="btn-secondary px-6 py-2 rounded-full min-w-[80px] transition-colors"
         >
           00:30
