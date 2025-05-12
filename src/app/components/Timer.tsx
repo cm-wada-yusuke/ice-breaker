@@ -67,7 +67,7 @@ export const Timer: React.FC<{ large: boolean }> = ({ large = false }) => {
       <div className="text-center">
         <div
           className={`font-mono leading-none w-full ${
-            large ? "text-[400px]" : "text-[200px]"
+            large ? "text-[25vw]" : "text-[200px]"
           } ${
             time === 0 && hasFinished ? "text-pink-500" : ""
           }`}
